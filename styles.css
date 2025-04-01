@@ -1,0 +1,264 @@
+@import url('https://fonts.googleapis.com/css2?family=Baskervville+SC&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+body {
+    margin: 0;
+    background-color: white;
+    color: #85C1E9;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Rubik', serif;
+    /* 'Baskervville SC', serif */
+}
+
+header {
+    background-color: #000;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    flex-shrink: 0;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.header-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.logo {
+    font-size: 30px;
+    font-weight: bold;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    text-align: center;
+    background-color: #85C1E9;
+}
+
+.main-content {
+    max-width: 800px;
+    padding: 20px;
+}
+
+h1, h2 {
+    color: black;
+}
+
+.upload-form {
+    background-color: white;
+    padding: 2em;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-top: 20px;
+    overflow: hidden; /* Prevents content from expanding the container */
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: black;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-family: inherit;
+}
+
+.btn:hover {
+    background-color: #444;
+}
+
+/* Styles for custom file input */
+.file-input-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.file-input {
+    position: absolute;
+    left: -9999px;
+}
+
+.file-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.file-label:hover {
+    background-color: #444;
+}
+
+.file-name {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Styles for how-to page */
+
+.how-to-link {
+    margin-top: 20px;
+}
+
+.how-to-link .btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.how-to-link .btn:hover {
+    background-color: #45a049;
+}
+
+ol, ul {
+    text-align: left;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-left: 30px;
+}
+
+li {
+    margin-bottom: 10px;
+    color: black;
+}
+
+h2 {
+    margin-top: 30px;
+}
+
+/* how to ^^ */
+
+
+
+/* Styles for results page */
+.results-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.result-btn {
+    margin-top: 0;
+}
+
+/* Styles for view category page */
+.user-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.user-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+    width: calc(33.33% - 10px);
+    box-sizing: border-box;
+}
+
+.user-item a {
+    color: #0066cc;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.user-item a:hover {
+    color: #004080;
+    text-decoration: underline;
+}
+
+/* Update the total counter color */
+p {
+    color: black;
+}
+
+footer {
+    background-color: #000;
+    color: white;
+    padding: 15px 0;
+    flex-shrink: 0;
+    position: relative;
+    height: 25px;
+    font-size: 18px;
+    text-align: center;
+    display: flex;
+    align-items: center;  /* Vertically center the text */
+    justify-content: center;  /* Horizontally center the text */
+}
+
+
+footer p {
+    color: white;
+}
+
+.footer-content {
+    width: 100%;
+    align-self: center;
+}
+
+/* Sort button for mutuals */
+
+.sort-toggle {
+    margin-bottom: 20px;
+}
+
+.sort-toggle .btn {
+    margin-right: 10px;
+}
+
+.sort-toggle .btn.active {
+    background-color: #007bff;
+    color: white;
+}
+
+
+@media (max-width: 1024px) {
+    .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .user-item {
+        width: calc(50% - 10px);
+    }
+}
+
+@media (max-width: 600px) {
+    .user-item {
+        width: 100%;
+    }
+}

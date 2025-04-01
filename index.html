@@ -2,106 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Instagram Followers Analyzer</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    h1, h2, h3 {
-      color: #333;
-    }
-    #output {
-      margin-top: 20px;
-    }
-    ul {
-      list-style-type: disc;
-      padding-left: 20px;
-    }
-  </style>
+  <title>Instagram Follower Analyzer</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Instagram Followers Analyzer</h1>
-  <p>Upload your Instagram data JSON file below. The JSON file should have the following structure:</p>
-  <pre>
-{
-  "followers": ["user1", "user2", "user3"],
-  "following": ["user2", "user3", "user4"]
-}
-  </pre>
-  <input type="file" id="jsonFile" accept=".json">
-  <button id="processButton">Process JSON</button>
-
-  <div id="output">
-    <h2>Results</h2>
-    <div id="mutual">
-      <h3>Mutual (Following & Followers)</h3>
-      <ul id="mutualList"></ul>
+  <header>
+    <div class="header-content">
+      <div class="logo">Insta Analyzer</div>
+      <a class="header-link" href="#">Home</a>
     </div>
-    <div id="nonFollowers">
-      <h3>Non-Followers (Only in Following)</h3>
-      <ul id="nonFollowersList"></ul>
+  </header>
+  <main>
+    <div class="main-content">
+      <h1>Instagram Follower Analyzer</h1>
+      <form id="upload-form" class="upload-form">
+        <div class="file-input-wrapper">
+          <label for="file-input" class="file-label">Choose JSON File</label>
+          <input id="file-input" class="file-input" type="file" accept=".json">
+        </div>
+        <span id="file-name" class="file-name">No file chosen</span>
+        <button type="submit" class="btn">Upload and Analyze</button>
+      </form>
+      <div id="results" style="display:none;">
+        <h2>Mutuals (Users you follow who also follow you)</h2>
+        <ul id="mutual-list"></ul>
+        <h2>Non-Followers (Users you follow but who don't follow you back)</h2>
+        <ul id="non-followers-list"></ul>
+        <h2>Fans (One-sided followers; users who follow you but you don’t follow back)</h2>
+        <ul id="fans-list"></ul>
+      </div>
     </div>
-    <div id="followersOnly">
-      <h3>Followers-Only (Fans)</h3>
-      <ul id="followersOnlyList"></ul>
-    </div>
-  </div>
-
-  <script>
-    document.getElementById('processButton').addEventListener('click', function() {
-      var fileInput = document.getElementById('jsonFile');
-      if (fileInput.files.length === 0) {
-        alert('Please select a JSON file.');
-        return;
-      }
-      var file = fileInput.files[0];
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          var data = JSON.parse(e.target.result);
-          // Expecting JSON structure:
-          // { "followers": [...], "following": [...] }
-          var followers = data.followers || [];
-          var following = data.following || [];
-
-          // Convert arrays to sets for quick lookup
-          var followersSet = new Set(followers);
-          var followingSet = new Set(following);
-
-          // Mutual: Intersection of both lists
-          var mutuals = following.filter(function(user) {
-            return followersSet.has(user);
-          });
-          // Non-followers: Users in following but not in followers
-          var nonFollowers = following.filter(function(user) {
-            return !followersSet.has(user);
-          });
-          // Followers-only: Users in followers but not in following
-          var followersOnly = followers.filter(function(user) {
-            return !followingSet.has(user);
-          });
-
-          // Display the results
-          displayList('mutualList', mutuals);
-          displayList('nonFollowersList', nonFollowers);
-          displayList('followersOnlyList', followersOnly);
-        } catch (error) {
-          alert('Error parsing JSON file: ' + error);
-        }
-      };
-      reader.readAsText(file);
-    });
-
-    function displayList(elementId, items) {
-      var listElement = document.getElementById(elementId);
-      listElement.innerHTML = '';
-      items.forEach(function(item) {
-        var li = document.createElement('li');
-        li.textContent = item;
-        listElement.appendChild(li);
-      });
-    }
-  </script>
+  </main>
+  <footer>
+    <p>&copy; 2025 Instagram Analyzer</p>
+  </footer>
+  <script src="script.js"></script>
 </body>
 </html>
