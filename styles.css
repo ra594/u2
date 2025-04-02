@@ -222,6 +222,28 @@ p {
     color: black;
 }
 
+/* Grid container for list cards */
+.list-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 80%;
+    margin: 0 auto;
+    direction: ltr;  /* Items ordered right-to–left per row */
+    padding-bottom: 20px;  /* Padding beneath the cards */
+  }
+  
+  /* Card design for each list item */
+  .card {
+    background-color: #fff;
+    color: #000;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    direction: ltr;  /* Ensure text inside flows normally */
+  }
+  
+
 footer {
     background-color: #000;
     color: white;

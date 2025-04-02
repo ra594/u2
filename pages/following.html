@@ -15,9 +15,9 @@
   </header>
   <main>
     <h1 id="page-title">Following Only</h1>
-    <ol id="following-only-list">
-      <!-- List items will be populated here -->
-    </ol>
+    <div class="list-container" id="list-container">
+      <!-- Cards will be dynamically inserted here -->
+    </div>
   </main>
   <footer>
     <p>&copy; 2025 DiswayDatway Inc.</p>
@@ -25,19 +25,66 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const followingOnlyList = JSON.parse(localStorage.getItem('followingOnlyList') || '[]');
-      const listContainer = document.getElementById('following-only-list');
+      const listContainer = document.getElementById('list-container');
       const titleElem = document.getElementById('page-title');
+      
       titleElem.textContent = `Following Only (${followingOnlyList.length})`;
 
       if (followingOnlyList.length === 0) {
-        const li = document.createElement('li');
-        li.textContent = 'No following only connections found.';
-        listContainer.appendChild(li);
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.textContent = 'No following only connections found.';
+        listContainer.appendChild(card);
       } else {
         followingOnlyList.forEach(function(username) {
-          const li = document.createElement('li');
-          li.textContent = username;
-          listContainer.appendChild(li);
+          const card = document.createElement('div');
+          card.className = 'card';
+          
+          // Create username element
+          const usernameSpan = document.createElement('span');
+          usernameSpan.textContent = username;
+          
+          // Create inline icons container
+          const iconsContainer = document.createElement('span');
+          iconsContainer.className = 'card-icons';
+          iconsContainer.style.display = 'inline-flex';
+          iconsContainer.style.gap = '5px';
+          iconsContainer.style.alignItems = 'center';
+          
+          // External link icon (using instagram.svg)
+          const externalLink = document.createElement('a');
+          externalLink.href = `https://instagram.com/${username}/`;
+          externalLink.target = '_blank';
+          externalLink.rel = 'noopener noreferrer';
+          const externalImg = document.createElement('img');
+          externalImg.src = '../assets/instagram.svg';
+          externalImg.alt = 'Instagram';
+          externalImg.style.maxHeight = '1em';
+          externalImg.style.verticalAlign = 'middle';
+          externalImg.style.transform = 'translateY(-2px)';
+          externalLink.appendChild(externalImg);
+          
+          // Info icon with tooltip
+          const infoIcon = document.createElement('span');
+          infoIcon.title = 'Timestamps';
+          const infoImg = document.createElement('img');
+          infoImg.src = '../assets/info.svg';
+          infoImg.alt = 'Info';
+          infoImg.style.maxHeight = '1em';
+          infoImg.style.verticalAlign = 'middle';
+          infoImg.style.transform = 'translateY(-2px)';
+          infoIcon.appendChild(infoImg);
+          
+          // Append icons to inline container
+          iconsContainer.appendChild(externalLink);
+          iconsContainer.appendChild(infoIcon);
+          
+          // Append username and icons to card
+          card.appendChild(usernameSpan);
+          card.appendChild(document.createTextNode(' '));
+          card.appendChild(iconsContainer);
+          
+          listContainer.appendChild(card);
         });
       }
     });
