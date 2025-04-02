@@ -51,7 +51,7 @@
           iconsContainer.style.gap = '5px';
           iconsContainer.style.alignItems = 'center';
           
-          // External link icon (using instagram.svg)
+          // Create external link icon (using instagram.svg)
           const externalLink = document.createElement('a');
           externalLink.href = `https://instagram.com/${username}/`;
           externalLink.target = '_blank';
@@ -64,9 +64,8 @@
           externalImg.style.transform = 'translateY(-2px)';
           externalLink.appendChild(externalImg);
           
-          // Info icon with tooltip
+          // Create info icon
           const infoIcon = document.createElement('span');
-          infoIcon.title = 'Timestamps';
           const infoImg = document.createElement('img');
           infoImg.src = '../assets/info.svg';
           infoImg.alt = 'Info';
@@ -75,11 +74,51 @@
           infoImg.style.transform = 'translateY(-2px)';
           infoIcon.appendChild(infoImg);
           
+          // Add tooltip functionality
+          infoIcon.addEventListener('mouseenter', function(e) {
+              let tooltip = document.createElement('div');
+              tooltip.className = 'custom-tooltip';
+              tooltip.textContent = 'Timestamps';
+              tooltip.style.position = 'absolute';
+              tooltip.style.backgroundColor = '#fff';
+              tooltip.style.color = '#000';
+              tooltip.style.borderRadius = '8px';
+              tooltip.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+              tooltip.style.padding = '5px 10px';
+              tooltip.style.fontSize = '0.8em';
+              tooltip.style.zIndex = '1000';
+              const rect = infoIcon.getBoundingClientRect();
+              tooltip.style.top = (window.scrollY + rect.bottom + 5) + 'px';
+              tooltip.style.left = (window.scrollX + rect.left) + 'px';
+              document.body.appendChild(tooltip);
+              infoIcon._tooltip = tooltip;
+              
+              tooltip.addEventListener('mouseenter', function() {
+                  clearTimeout(infoIcon._hideTimeout);
+              });
+              tooltip.addEventListener('mouseleave', function() {
+                  hideTooltip();
+              });
+          });
+          
+          infoIcon.addEventListener('mouseleave', function(e) {
+              hideTooltip();
+          });
+          
+          function hideTooltip() {
+              infoIcon._hideTimeout = setTimeout(() => {
+                  if (infoIcon._tooltip) {
+                      document.body.removeChild(infoIcon._tooltip);
+                      infoIcon._tooltip = null;
+                  }
+              }, 200);
+          }
+          
           // Append icons to inline container
           iconsContainer.appendChild(externalLink);
           iconsContainer.appendChild(infoIcon);
           
-          // Append username and icons to card
+          // Append username and icons container to card
           card.appendChild(usernameSpan);
           card.appendChild(document.createTextNode(' '));
           card.appendChild(iconsContainer);

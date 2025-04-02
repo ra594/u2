@@ -35,60 +35,101 @@
         card.className = 'card';
         card.textContent = 'No mutual connections found.';
         listContainer.appendChild(card);
-      } else {mutualList.forEach(function(username) {
-        const card = document.createElement('div');
-        card.className = 'card';
-        
-        // Create username element
-        const usernameSpan = document.createElement('span');
-        usernameSpan.textContent = username;
-        
-        // Create inline container for icons
-        const iconsContainer = document.createElement('span');
-        iconsContainer.className = 'card-icons';
-        iconsContainer.style.display = 'inline-flex';
-        iconsContainer.style.gap = '5px';
-        iconsContainer.style.verticalAlign = 'middle';
-        
-        // Create external link icon (using instagram.svg)
-        const externalLink = document.createElement('a');
-        externalLink.href = `https://instagram.com/${username}/`;
-        externalLink.target = '_blank';
-        externalLink.rel = 'noopener noreferrer';
-        const externalImg = document.createElement('img');
-        externalImg.src = '../assets/instagram.svg';
-        externalImg.alt = 'Instagram';
-        externalImg.style.maxHeight = '1em';
-        externalImg.style.verticalAlign = 'middle';
-        externalImg.style.transform = 'translateY(-2px)';
-
-        externalLink.appendChild(externalImg);
-        
-        // Create info icon with tooltip
-        const infoIcon = document.createElement('span');
-        infoIcon.title = 'Timestamps';
-        const infoImg = document.createElement('img');
-        infoImg.src = '../assets/info.svg';
-        infoImg.alt = 'Info';
-        infoImg.style.maxHeight = '1em';
-        infoImg.style.verticalAlign = 'middle';
-        infoImg.style.transform = 'translateY(-2px)';
-
-
-        infoIcon.appendChild(infoImg);
-        
-        // Append icons to inline container
-        iconsContainer.appendChild(externalLink);
-        iconsContainer.appendChild(infoIcon);
-        
-        // Append username and icons container (with a small space between)
-        card.appendChild(usernameSpan);
-        card.appendChild(document.createTextNode(' '));
-        card.appendChild(iconsContainer);
-        
-        listContainer.appendChild(card);
-      });
-
+      } else {
+        mutualList.forEach(function(username) {
+          const card = document.createElement('div');
+          card.className = 'card';
+          
+          // Create username element
+          const usernameSpan = document.createElement('span');
+          usernameSpan.textContent = username;
+          
+          // Create inline icons container
+          const iconsContainer = document.createElement('span');
+          iconsContainer.className = 'card-icons';
+          iconsContainer.style.display = 'inline-flex';
+          iconsContainer.style.gap = '5px';
+          iconsContainer.style.alignItems = 'center';
+          
+          // Create external link icon (using instagram.svg)
+          const externalLink = document.createElement('a');
+          externalLink.href = `https://instagram.com/${username}/`;
+          externalLink.target = '_blank';
+          externalLink.rel = 'noopener noreferrer';
+          const externalImg = document.createElement('img');
+          externalImg.src = '../assets/instagram.svg';
+          externalImg.alt = 'Instagram';
+          externalImg.style.maxHeight = '1em';
+          externalImg.style.verticalAlign = 'middle';
+          externalImg.style.transform = 'translateY(-2px)';
+          externalLink.appendChild(externalImg);
+          
+          // Create info icon (without title attribute)
+          const infoIcon = document.createElement('span');
+          const infoImg = document.createElement('img');
+          infoImg.src = '../assets/info.svg';
+          infoImg.alt = 'Info';
+          infoImg.style.maxHeight = '1em';
+          infoImg.style.verticalAlign = 'middle';
+          infoImg.style.transform = 'translateY(-2px)';
+          infoIcon.appendChild(infoImg);
+          
+          // Add custom tooltip functionality to the info icon
+          infoIcon.addEventListener('mouseenter', function(e) {
+              // Create tooltip element
+              let tooltip = document.createElement('div');
+              tooltip.className = 'custom-tooltip';
+              tooltip.textContent = 'Timestamps';
+              // Style the tooltip similar to a card
+              tooltip.style.position = 'absolute';
+              tooltip.style.backgroundColor = '#fff';
+              tooltip.style.color = '#000';
+              tooltip.style.borderRadius = '8px';
+              tooltip.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+              tooltip.style.padding = '5px 10px';
+              tooltip.style.fontSize = '0.8em';
+              tooltip.style.zIndex = '1000';
+              // Position the tooltip relative to the info icon
+              const rect = infoIcon.getBoundingClientRect();
+              tooltip.style.top = (window.scrollY + rect.bottom + 5) + 'px';
+              tooltip.style.left = (window.scrollX + rect.left) + 'px';
+              document.body.appendChild(tooltip);
+              infoIcon._tooltip = tooltip;
+              
+              // When mouse enters tooltip, cancel any hide timeout
+              tooltip.addEventListener('mouseenter', function() {
+                  clearTimeout(infoIcon._hideTimeout);
+              });
+              // When mouse leaves tooltip, hide it
+              tooltip.addEventListener('mouseleave', function() {
+                  hideTooltip();
+              });
+          });
+          
+          infoIcon.addEventListener('mouseleave', function(e) {
+              hideTooltip();
+          });
+          
+          function hideTooltip() {
+              infoIcon._hideTimeout = setTimeout(() => {
+                  if (infoIcon._tooltip) {
+                      document.body.removeChild(infoIcon._tooltip);
+                      infoIcon._tooltip = null;
+                  }
+              }, 200);
+          }
+          
+          // Append external link and info icon to the icons container
+          iconsContainer.appendChild(externalLink);
+          iconsContainer.appendChild(infoIcon);
+          
+          // Append username and icons container to the card
+          card.appendChild(usernameSpan);
+          card.appendChild(document.createTextNode(' '));
+          card.appendChild(iconsContainer);
+          
+          listContainer.appendChild(card);
+        });
       }
     });
   </script>
