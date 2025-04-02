@@ -14,7 +14,7 @@
     </div>
   </header>
   <main>
-    <h1>Following Only</h1>
+    <h1 id="page-title">Following Only</h1>
     <ol id="following-only-list">
       <!-- List items will be populated here -->
     </ol>
@@ -26,6 +26,8 @@
     document.addEventListener('DOMContentLoaded', function() {
       const followingOnlyList = JSON.parse(localStorage.getItem('followingOnlyList') || '[]');
       const listContainer = document.getElementById('following-only-list');
+      const titleElem = document.getElementById('page-title');
+      titleElem.textContent = `Following Only (${followingOnlyList.length})`;
 
       if (followingOnlyList.length === 0) {
         const li = document.createElement('li');

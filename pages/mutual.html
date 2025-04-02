@@ -14,7 +14,7 @@
     </div>
   </header>
   <main>
-    <h1>Mutual Connections</h1>
+    <h1 id="page-title">Mutual Connections</h1>
     <ol id="mutual-list">
       <!-- List items will be populated here -->
     </ol>
@@ -26,6 +26,8 @@
     document.addEventListener('DOMContentLoaded', function() {
       const mutualList = JSON.parse(localStorage.getItem('mutualList') || '[]');
       const listContainer = document.getElementById('mutual-list');
+      const titleElem = document.getElementById('page-title');
+      titleElem.textContent = `Mutual Connections (${mutualList.length})`;
 
       if (mutualList.length === 0) {
         const li = document.createElement('li');
