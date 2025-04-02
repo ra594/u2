@@ -36,13 +36,13 @@
         card.textContent = 'No followers only connections found.';
         listContainer.appendChild(card);
       } else {
-        followersOnlyList.forEach(function(username) {
+        followersOnlyList.forEach(function(connection) {
           const card = document.createElement('div');
           card.className = 'card';
           
-          // Create username element
+          // Create username element using the connection object
           const usernameSpan = document.createElement('span');
-          usernameSpan.textContent = username;
+          usernameSpan.textContent = connection.username;
           
           // Create inline icons container
           const iconsContainer = document.createElement('span');
@@ -53,7 +53,7 @@
           
           // Create external link icon (using instagram.svg)
           const externalLink = document.createElement('a');
-          externalLink.href = `https://instagram.com/${username}/`;
+          externalLink.href = `https://instagram.com/${connection.username}/`;
           externalLink.target = '_blank';
           externalLink.rel = 'noopener noreferrer';
           const externalImg = document.createElement('img');
