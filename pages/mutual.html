@@ -30,6 +30,19 @@
       
       titleElem.textContent = `Mutual Connections (${mutualList.length})`;
 
+      // Function to format Unix timestamp (seconds) into "Month DD, YYYY (HH:MM AM/PM)"
+      const formatTimestamp = (timestamp) => {
+        if (!timestamp) return '';
+        return new Date(timestamp * 1000).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: '2-digit',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+      };
+
       if (mutualList.length === 0) {
         const card = document.createElement('div');
         card.className = 'card';
@@ -40,18 +53,18 @@
           const card = document.createElement('div');
           card.className = 'card';
           
-          // Create username element using the object property
+          // Username element
           const usernameSpan = document.createElement('span');
           usernameSpan.textContent = connection.username;
           
-          // Create inline icons container
+          // Inline icons container
           const iconsContainer = document.createElement('span');
           iconsContainer.className = 'card-icons';
           iconsContainer.style.display = 'inline-flex';
           iconsContainer.style.gap = '5px';
           iconsContainer.style.alignItems = 'center';
           
-          // Create external link icon (using instagram.svg)
+          // External link icon (using instagram.svg)
           const externalLink = document.createElement('a');
           externalLink.href = `https://instagram.com/${connection.username}/`;
           externalLink.target = '_blank';
@@ -64,7 +77,7 @@
           externalImg.style.transform = 'translateY(-2px)';
           externalLink.appendChild(externalImg);
           
-          // Create info icon (no title attribute)
+          // Info icon
           const infoIcon = document.createElement('span');
           const infoImg = document.createElement('img');
           infoImg.src = '../assets/info.svg';
@@ -74,7 +87,10 @@
           infoImg.style.transform = 'translateY(-2px)';
           infoIcon.appendChild(infoImg);
           
-          // Custom tooltip functionality for infoIcon
+          // Attach connection data to the info icon
+          infoIcon.connection = connection;
+          
+          // Custom tooltip functionality for info icon
           infoIcon.addEventListener('mouseenter', function(e) {
             if (infoIcon._hideTimeout) {
               clearTimeout(infoIcon._hideTimeout);
@@ -82,7 +98,15 @@
             if (!infoIcon._tooltip) {
               let tooltip = document.createElement('div');
               tooltip.className = 'custom-tooltip';
-              tooltip.textContent = 'Timestamps';
+              // Build the tooltip text: two lines
+              let tooltipText = "";
+              if (infoIcon.connection.youFollowedOn) {
+                tooltipText += "You followed on: " + formatTimestamp(infoIcon.connection.youFollowedOn) + "<br>";
+              }
+              if (infoIcon.connection.followedYouOn) {
+                tooltipText += "Followed you on: " + formatTimestamp(infoIcon.connection.followedYouOn);
+              }
+              tooltip.innerHTML = tooltipText;
               tooltip.style.position = 'absolute';
               tooltip.style.backgroundColor = '#fff';
               tooltip.style.color = '#000';
@@ -123,11 +147,11 @@
             }, 200);
           }
           
-          // Append external link and info icon to the icons container
+          // Append icons to icons container
           iconsContainer.appendChild(externalLink);
           iconsContainer.appendChild(infoIcon);
           
-          // Append username and icons container to the card
+          // Append username and icons container to card
           card.appendChild(usernameSpan);
           card.appendChild(document.createTextNode(' '));
           card.appendChild(iconsContainer);
