@@ -45,6 +45,7 @@ header {
 
 main {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     flex-grow: 1;
@@ -145,6 +146,12 @@ ol, ul {
     max-width: 600px;
     margin: 0 auto;
     padding-left: 30px;
+}
+
+ol li img {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
 li {

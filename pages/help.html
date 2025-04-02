@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Instagram Follower Analyzer</title>
+  <link rel="stylesheet" href="../styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">Instagram Followers</div>
+      <a class="header-link" href="#">Home</a>
+      <a class="header-link" href="pages/help.html">Usage</a>
+    </div>
+  </header>
+  <main>
+    <h1>How to Download Your Instagram Data</h1>
+    <ol>
+        <li>Go to <a href="https://accountscenter.instagram.com/info_and_permissions" target="_blank" rel="noopener noreferrer">accountscenter.instagram.com/info_and_permissions</a>
+            <ul>
+                <li>Be sure you're signed into the correct account</li>
+            </ul>
+        </li>
+        <li>"Your information and permissions" on the left menu</li>
+        <li>"Download your information"</li>
+        <li>"Download or transfer information"</li>
+        <li>"Some of your information" (critical time-saver)</li>
+        <li> Scroll down to connections and select only "Followers & Following"</li>
+        <li>"Next"</li>
+        <li>"Download to Device"</li>
+        <li>Change Date range to "All time" and Format to "JSON"</li>
+        <li>Page should look like this:
+          <img src="../assets/download%20page.png" style="padding-top: 7px;">
+        </li>
+        <li>"Create Files"</li>
+        <li>Note: This usually takes &#8804; 5 minutes, but might be longer the first time</li>
+    </ol>
+    
+    <h2>After Requesting the Download:</h2>
+    <ul style="padding-bottom: 10px;">
+        <li>You'll receive an email from Instagram confirming the request and another one when it's complete. Both links will bring you back to the same page.</li>
+        <li>When it's done processing, it will switch from "in progress" to "available".</li>
+        <li>The file will save as a .zip file that looks like "instagram-user-2024-01-01-etc.zip".</li>
+    </ul>
+  </main>
+  <footer>
+    <p>&copy; 2025 DiswayDatway Inc.</p>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
