@@ -64,7 +64,7 @@
           externalImg.style.transform = 'translateY(-2px)';
           externalLink.appendChild(externalImg);
           
-          // Create info icon without title attribute
+          // Create info icon (no title attribute)
           const infoIcon = document.createElement('span');
           const infoImg = document.createElement('img');
           infoImg.src = '../assets/info.svg';
@@ -74,8 +74,12 @@
           infoImg.style.transform = 'translateY(-2px)';
           infoIcon.appendChild(infoImg);
           
-          // Add custom tooltip functionality
+          // Custom tooltip functionality for infoIcon
           infoIcon.addEventListener('mouseenter', function(e) {
+            if (infoIcon._hideTimeout) {
+              clearTimeout(infoIcon._hideTimeout);
+            }
+            if (!infoIcon._tooltip) {
               let tooltip = document.createElement('div');
               tooltip.className = 'custom-tooltip';
               tooltip.textContent = 'Timestamps';
@@ -94,31 +98,36 @@
               infoIcon._tooltip = tooltip;
               
               tooltip.addEventListener('mouseenter', function() {
+                if (infoIcon._hideTimeout) {
                   clearTimeout(infoIcon._hideTimeout);
+                }
               });
               tooltip.addEventListener('mouseleave', function() {
-                  hideTooltip();
+                hideTooltip();
               });
+            }
           });
           
           infoIcon.addEventListener('mouseleave', function(e) {
-              hideTooltip();
+            hideTooltip();
           });
           
           function hideTooltip() {
-              infoIcon._hideTimeout = setTimeout(() => {
-                  if (infoIcon._tooltip) {
-                      document.body.removeChild(infoIcon._tooltip);
-                      infoIcon._tooltip = null;
-                  }
-              }, 200);
+            infoIcon._hideTimeout = setTimeout(() => {
+              const iconHovered = infoIcon.matches(':hover');
+              const tooltipHovered = infoIcon._tooltip ? infoIcon._tooltip.matches(':hover') : false;
+              if (!iconHovered && !tooltipHovered && infoIcon._tooltip) {
+                document.body.removeChild(infoIcon._tooltip);
+                infoIcon._tooltip = null;
+              }
+            }, 200);
           }
           
-          // Append icons to inline container
+          // Append external link and info icon to the icons container
           iconsContainer.appendChild(externalLink);
           iconsContainer.appendChild(infoIcon);
           
-          // Append username and icons container to card
+          // Append username and icons container to the card
           card.appendChild(usernameSpan);
           card.appendChild(document.createTextNode(' '));
           card.appendChild(iconsContainer);

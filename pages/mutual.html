@@ -64,7 +64,7 @@
           externalImg.style.transform = 'translateY(-2px)';
           externalLink.appendChild(externalImg);
           
-          // Create info icon (without title attribute)
+          // Create info icon without title attribute
           const infoIcon = document.createElement('span');
           const infoImg = document.createElement('img');
           infoImg.src = '../assets/info.svg';
@@ -74,13 +74,15 @@
           infoImg.style.transform = 'translateY(-2px)';
           infoIcon.appendChild(infoImg);
           
-          // Add custom tooltip functionality to the info icon
+          // Custom tooltip functionality for infoIcon
           infoIcon.addEventListener('mouseenter', function(e) {
-              // Create tooltip element
+            if (infoIcon._hideTimeout) {
+              clearTimeout(infoIcon._hideTimeout);
+            }
+            if (!infoIcon._tooltip) {
               let tooltip = document.createElement('div');
               tooltip.className = 'custom-tooltip';
               tooltip.textContent = 'Timestamps';
-              // Style the tooltip similar to a card
               tooltip.style.position = 'absolute';
               tooltip.style.backgroundColor = '#fff';
               tooltip.style.color = '#000';
@@ -89,34 +91,36 @@
               tooltip.style.padding = '5px 10px';
               tooltip.style.fontSize = '0.8em';
               tooltip.style.zIndex = '1000';
-              // Position the tooltip relative to the info icon
               const rect = infoIcon.getBoundingClientRect();
               tooltip.style.top = (window.scrollY + rect.bottom + 5) + 'px';
               tooltip.style.left = (window.scrollX + rect.left) + 'px';
               document.body.appendChild(tooltip);
               infoIcon._tooltip = tooltip;
               
-              // When mouse enters tooltip, cancel any hide timeout
               tooltip.addEventListener('mouseenter', function() {
+                if (infoIcon._hideTimeout) {
                   clearTimeout(infoIcon._hideTimeout);
+                }
               });
-              // When mouse leaves tooltip, hide it
               tooltip.addEventListener('mouseleave', function() {
-                  hideTooltip();
+                hideTooltip();
               });
+            }
           });
           
           infoIcon.addEventListener('mouseleave', function(e) {
-              hideTooltip();
+            hideTooltip();
           });
           
           function hideTooltip() {
-              infoIcon._hideTimeout = setTimeout(() => {
-                  if (infoIcon._tooltip) {
-                      document.body.removeChild(infoIcon._tooltip);
-                      infoIcon._tooltip = null;
-                  }
-              }, 200);
+            infoIcon._hideTimeout = setTimeout(() => {
+              const iconHovered = infoIcon.matches(':hover');
+              const tooltipHovered = infoIcon._tooltip ? infoIcon._tooltip.matches(':hover') : false;
+              if (!iconHovered && !tooltipHovered && infoIcon._tooltip) {
+                document.body.removeChild(infoIcon._tooltip);
+                infoIcon._tooltip = null;
+              }
+            }, 200);
           }
           
           // Append external link and info icon to the icons container
