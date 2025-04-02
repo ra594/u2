@@ -3,9 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const fileNameSpan = document.getElementById('file-name');
   const uploadForm = document.getElementById('upload-form');
   const resultsDiv = document.getElementById('results');
-  const mutualList = document.getElementById('mutual-list');
-  const nonFollowersList = document.getElementById('non-followers-list');
-  const fansList = document.getElementById('fans-list');
 
   // Update file name when a file is selected
   fileInput.addEventListener('change', function() {
@@ -25,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    // Hide the upload form (upload box) upon submission
+    // Hide the upload form upon submission
     uploadForm.style.display = 'none';
 
     const file = fileInput.files[0];
@@ -72,14 +69,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Calculate the lists
             const mutual = followingUsernames.filter(username => followersUsernames.includes(username));
-            const nonFollowers = followingUsernames.filter(username => !followersUsernames.includes(username));
-            const fans = followersUsernames.filter(username => !followingUsernames.includes(username));
+            const followingOnly = followingUsernames.filter(username => !followersUsernames.includes(username));
+            const followersOnly = followersUsernames.filter(username => !followingUsernames.includes(username));
 
-            populateList(mutualList, mutual);
-            populateList(nonFollowersList, nonFollowers);
-            populateList(fansList, fans);
+            // Save lists to localStorage
+            localStorage.setItem('mutualList', JSON.stringify(mutual));
+            localStorage.setItem('followingOnlyList', JSON.stringify(followingOnly));
+            localStorage.setItem('followersOnlyList', JSON.stringify(followersOnly));
 
+            // Create links to new pages including counts
+            resultsDiv.innerHTML = ''; // Clear any existing content
+
+            const container = document.createElement('div');
+            container.className = 'results-links';
+
+            const mutualLink = document.createElement('a');
+            mutualLink.href = 'pages/mutual.html';
+            mutualLink.textContent = `View Mutual Connections (${mutual.length})`;
+            mutualLink.className = 'btn';
+
+            const followingLink = document.createElement('a');
+            followingLink.href = 'pages/following.html';
+            followingLink.textContent = `View Following Only (${followingOnly.length})`;
+            followingLink.className = 'btn';
+
+            const followersLink = document.createElement('a');
+            followersLink.href = 'pages/followers.html';
+            followersLink.textContent = `View Followers Only (${followersOnly.length})`;
+            followersLink.className = 'btn';
+
+            // Append links to container
+            container.appendChild(mutualLink);
+            container.appendChild(followingLink);
+            container.appendChild(followersLink);
+
+            // Append container to resultsDiv and display it
+            resultsDiv.appendChild(container);
             resultsDiv.style.display = 'block';
+
           }).catch(function(error) {
             console.error('Error processing JSON files:', error);
           });
@@ -91,20 +118,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
     reader.readAsArrayBuffer(file);
   });
-
-  // Helper function to populate a given list element with usernames
-  function populateList(listElement, usernames) {
-    listElement.innerHTML = '';
-    if (usernames.length === 0) {
-      const li = document.createElement('li');
-      li.textContent = 'No users found.';
-      listElement.appendChild(li);
-    } else {
-      usernames.forEach(username => {
-        const li = document.createElement('li');
-        li.textContent = username;
-        listElement.appendChild(li);
-      });
-    }
-  }
 });

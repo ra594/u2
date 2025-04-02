@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mutual Connections</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">Instagram Followers</div>
+      <a class="header-link" href="../index.html">Home</a>
+      <a class="header-link" href="help.html">Usage</a>
+    </div>
+  </header>
+  <main>
+    <h1>Mutual Connections</h1>
+    <ol id="mutual-list">
+      <!-- List items will be populated here -->
+    </ol>
+  </main>
+  <footer>
+    <p>&copy; 2025 DiswayDatway Inc.</p>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const mutualList = JSON.parse(localStorage.getItem('mutualList') || '[]');
+      const listContainer = document.getElementById('mutual-list');
+
+      if (mutualList.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'No mutual connections found.';
+        listContainer.appendChild(li);
+      } else {
+        mutualList.forEach(function(username) {
+          const li = document.createElement('li');
+          li.textContent = username;
+          listContainer.appendChild(li);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

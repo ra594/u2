@@ -211,6 +211,12 @@ h2 {
     text-decoration: underline;
 }
 
+.results-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1px; /* Adjust spacing as needed */
+  }  
+
 /* Update the total counter color */
 p {
     color: black;

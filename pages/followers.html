@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Followers Only</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">Instagram Followers</div>
+      <a class="header-link" href="../index.html">Home</a>
+      <a class="header-link" href="help.html">Usage</a>
+    </div>
+  </header>
+  <main>
+    <h1>Followers Only</h1>
+    <ol id="followers-only-list">
+      <!-- List items will be populated here -->
+    </ol>
+  </main>
+  <footer>
+    <p>&copy; 2025 DiswayDatway Inc.</p>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const followersOnlyList = JSON.parse(localStorage.getItem('followersOnlyList') || '[]');
+      const listContainer = document.getElementById('followers-only-list');
+
+      if (followersOnlyList.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'No followers only connections found.';
+        listContainer.appendChild(li);
+      } else {
+        followersOnlyList.forEach(function(username) {
+          const li = document.createElement('li');
+          li.textContent = username;
+          listContainer.appendChild(li);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
