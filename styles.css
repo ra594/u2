@@ -63,13 +63,17 @@ h1, h2 {
 }
 
 .upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* adjust as needed */
     background-color: white;
     padding: 2em;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     margin-top: 20px;
-    overflow: hidden; /* Prevents content from expanding the container */
+    overflow: hidden;
 }
+
 
 .btn {
     display: inline-block;
@@ -94,7 +98,7 @@ h1, h2 {
 .file-input-wrapper {
     position: relative;
     display: inline-block;
-    margin-right: 10px;
+    flex-direction: column;
 }
 
 .file-input {
