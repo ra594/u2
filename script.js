@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const updateForm = document.getElementById('update-form');
   const resultsDiv = document.getElementById('results');
   const clearBtn = document.getElementById('clear-btn');
+  const confirmOverlay = document.getElementById('confirm-overlay');
+  const ackCheckbox = document.getElementById('ack-checkbox');
+  const confirmClearBtn = document.getElementById('confirm-clear-btn');
 
   // Bail out if elements aren't present (e.g., help page)
   if (!fileInput || !uploadForm || !resultsDiv) {
@@ -241,22 +244,47 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  const clearData = () => {
+    localStorage.removeItem('mutualList');
+    localStorage.removeItem('followingOnlyList');
+    localStorage.removeItem('followersOnlyList');
+    localStorage.removeItem('hasResults');
+    localStorage.removeItem('dataRuns');
+    resultsDiv.innerHTML = '';
+    resultsDiv.style.display = 'none';
+    clearBtn.style.display = 'none';
+    uploadForm.style.display = 'flex';
+    if (updateForm) updateForm.style.display = 'none';
+    fileInput.value = '';
+    fileNameSpan.textContent = 'No file chosen';
+    if (updateFileInput) updateFileInput.value = '';
+    if (updateFileNameSpan) updateFileNameSpan.textContent = 'No file chosen';
+  };
+
   if (clearBtn) {
     clearBtn.addEventListener('click', function() {
-      localStorage.removeItem('mutualList');
-      localStorage.removeItem('followingOnlyList');
-      localStorage.removeItem('followersOnlyList');
-      localStorage.removeItem('hasResults');
-      localStorage.removeItem('dataRuns');
-      resultsDiv.innerHTML = '';
-      resultsDiv.style.display = 'none';
-      clearBtn.style.display = 'none';
-      uploadForm.style.display = 'flex';
-      if (updateForm) updateForm.style.display = 'none';
-      fileInput.value = '';
-      fileNameSpan.textContent = 'No file chosen';
-      if (updateFileInput) updateFileInput.value = '';
-      if (updateFileNameSpan) updateFileNameSpan.textContent = 'No file chosen';
+      if (confirmOverlay) {
+        confirmOverlay.style.display = 'flex';
+        if (ackCheckbox) ackCheckbox.checked = false;
+        if (confirmClearBtn) confirmClearBtn.style.display = 'none';
+      } else {
+        clearData();
+      }
+    });
+  }
+
+  if (ackCheckbox) {
+    ackCheckbox.addEventListener('change', function() {
+      if (confirmClearBtn) {
+        confirmClearBtn.style.display = this.checked ? 'inline-block' : 'none';
+      }
+    });
+  }
+
+  if (confirmClearBtn) {
+    confirmClearBtn.addEventListener('click', function() {
+      clearData();
+      if (confirmOverlay) confirmOverlay.style.display = 'none';
     });
   }
 });
