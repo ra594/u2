@@ -295,6 +295,39 @@ footer p {
     color: white;
 }
 
+/* Modal overlay for clear confirmation */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.warning-text {
+    color: #ff4c4c;
+    margin-bottom: 10px;
+}
+
+.ack-label {
+    color: #ff4c4c;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 
 @media (max-width: 1024px) {
     .footer-content {
