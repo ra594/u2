@@ -85,8 +85,8 @@ document.addEventListener('DOMContentLoaded', function() {
           document.body.appendChild(tooltip);
         }
         const rect = del.getBoundingClientRect();
-        tooltip.style.top = (window.scrollY + rect.bottom + 5) + 'px';
-        tooltip.style.left = (window.scrollX + rect.left) + 'px';
+        tooltip.style.top = (window.scrollY + rect.top) + 'px';
+        tooltip.style.left = (window.scrollX + rect.right + 5) + 'px';
       };
       const hideTooltip = () => {
         del._hideTimeout = setTimeout(() => {
@@ -106,6 +106,11 @@ document.addEventListener('DOMContentLoaded', function() {
       del.addEventListener('mouseleave', hideTooltip);
 
       del.addEventListener('click', () => {
+        if (del._hideTimeout) clearTimeout(del._hideTimeout);
+        if (tooltip) {
+          document.body.removeChild(tooltip);
+          tooltip = null;
+        }
         dataRuns.splice(index, 1);
         if (dataRuns.length === 0) {
           clearData();
