@@ -349,6 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (openUploadMainBtn) openUploadMainBtn.style.display = 'none';
     fileInput.value = '';
     fileNameSpan.textContent = 'No file chosen';
+    if (runDatesList) runDatesList.innerHTML = '';
   };
 
   if (clearBtn) {
