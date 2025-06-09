@@ -147,6 +147,29 @@ document.addEventListener('DOMContentLoaded', function() {
   const sortDataRuns = () => {
     dataRuns.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   };
+
+  const recomputeNewMarkers = () => {
+    // Compute isNew flags based on chronological order of runs
+    dataRuns.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    dataRuns.forEach((run, idx) => {
+      if (idx === 0) {
+        // First run: no new markers
+        run.mutual = run.mutual.map(i => Object.assign({}, i, { isNew: false }));
+        run.followingOnly = run.followingOnly.map(i => Object.assign({}, i, { isNew: false }));
+        run.followersOnly = run.followersOnly.map(i => Object.assign({}, i, { isNew: false }));
+      } else {
+        const prev = dataRuns[idx - 1];
+        const prevFollowSet = new Set(prev.followingOnly.map(i => i.username));
+        const prevFanSet = new Set(prev.followersOnly.map(i => i.username));
+        const prevMutualSet = new Set(prev.mutual.map(i => i.username));
+        run.followingOnly = run.followingOnly.map(i => Object.assign({}, i, { isNew: !prevFollowSet.has(i.username) }));
+        run.followersOnly = run.followersOnly.map(i => Object.assign({}, i, { isNew: !prevFanSet.has(i.username) }));
+        run.mutual = run.mutual.map(i => Object.assign({}, i, { isNew: !prevMutualSet.has(i.username) }));
+      }
+    });
+    sortDataRuns();
+  };
+
   sortDataRuns();
   populateRunDates();
   if (dataRuns.length > 0) {
@@ -294,34 +317,19 @@ document.addEventListener('DOMContentLoaded', function() {
       followersOnly: data.followersOnly
     };
 
-    if (isUpdate && dataRuns.length > 0) {
-      sortDataRuns();
-      const prev = dataRuns[0];
-      const prevFollowSet = new Set(prev.followingOnly.map(i => i.username));
-      const prevFanSet = new Set(prev.followersOnly.map(i => i.username));
-      const prevMutualSet = new Set(prev.mutual.map(i => i.username));
-      run.followingOnly = run.followingOnly.map(i => {
-        return prevFollowSet.has(i.username) ? i : Object.assign({}, i, { isNew: true });
-      });
-      run.followersOnly = run.followersOnly.map(i => {
-        return prevFanSet.has(i.username) ? i : Object.assign({}, i, { isNew: true });
-      });
-      run.mutual = run.mutual.map(i => {
-        return prevMutualSet.has(i.username) ? i : Object.assign({}, i, { isNew: true });
-      });
-      dataRuns.push(run);
-    } else {
-      dataRuns = [run];
-    }
-    sortDataRuns();
+    dataRuns.push(run);
+    recomputeNewMarkers();
+
     localStorage.setItem('dataRuns', JSON.stringify(dataRuns));
-    // legacy keys for other pages
-    localStorage.setItem('mutualList', JSON.stringify(run.mutual));
-    localStorage.setItem('followingOnlyList', JSON.stringify(run.followingOnly));
-    localStorage.setItem('followersOnlyList', JSON.stringify(run.followersOnly));
+
+    // Use the newest run for page display
+    const latest = dataRuns[0];
+    localStorage.setItem('mutualList', JSON.stringify(latest.mutual));
+    localStorage.setItem('followingOnlyList', JSON.stringify(latest.followingOnly));
+    localStorage.setItem('followersOnlyList', JSON.stringify(latest.followersOnly));
     localStorage.setItem('hasResults', 'true');
 
-    showResults(run.mutual, run.followingOnly, run.followersOnly);
+    showResults(latest.mutual, latest.followingOnly, latest.followersOnly);
     // Hide the initial upload form once we have at least one run
     if (uploadForm) uploadForm.style.display = 'none';
     if (clearBtn) {
