@@ -2,9 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const fileInput = document.getElementById('file-input');
   const fileNameSpan = document.getElementById('file-name');
   const uploadForm = document.getElementById('upload-form');
-  const updateFileInput = document.getElementById('update-file-input');
-  const updateFileNameSpan = document.getElementById('update-file-name');
-  const updateForm = document.getElementById('update-form');
+  const openUploadMainBtn = document.getElementById('open-upload-main');
   const resultsDiv = document.getElementById('results');
   const clearBtn = document.getElementById('clear-btn');
   const confirmOverlay = document.getElementById('confirm-overlay');
@@ -127,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showResults(latest.mutual, latest.followingOnly, latest.followersOnly);
         if (clearBtn) clearBtn.style.display = 'inline-block';
-        if (updateForm) updateForm.style.display = 'flex';
+        if (openUploadMainBtn) openUploadMainBtn.style.display = 'inline-block';
         populateRunDates();
       });
 
@@ -144,15 +142,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  if (updateFileInput) {
-    updateFileInput.addEventListener('change', function() {
-      if (updateFileInput.files.length > 0) {
-        updateFileNameSpan.textContent = updateFileInput.files[0].name;
-      } else {
-        updateFileNameSpan.textContent = 'No file chosen';
-      }
-    });
-  }
 
   let dataRuns = JSON.parse(localStorage.getItem('dataRuns') || '[]');
   const sortDataRuns = () => {
@@ -163,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (dataRuns.length > 0) {
     const latest = dataRuns[0];
     uploadForm.style.display = 'none';
-    if (updateForm) updateForm.style.display = 'flex';
+    if (openUploadMainBtn) openUploadMainBtn.style.display = 'inline-block';
     showResults(latest.mutual, latest.followingOnly, latest.followersOnly);
     if (clearBtn) {
       clearBtn.style.display = 'inline-block';
@@ -174,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const followingOnly = JSON.parse(localStorage.getItem('followingOnlyList') || '[]');
     const followersOnly = JSON.parse(localStorage.getItem('followersOnlyList') || '[]');
     uploadForm.style.display = 'none';
-    if (updateForm) updateForm.style.display = 'flex';
+    if (openUploadMainBtn) openUploadMainBtn.style.display = 'inline-block';
     showResults(mutual, followingOnly, followersOnly);
     if (clearBtn) {
       clearBtn.style.display = 'inline-block';
@@ -321,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (clearBtn) {
       clearBtn.style.display = 'inline-block';
     }
-    if (updateForm) updateForm.style.display = 'flex';
+    if (openUploadMainBtn) openUploadMainBtn.style.display = 'inline-block';
     populateRunDates();
   };
 
@@ -337,17 +326,6 @@ document.addEventListener('DOMContentLoaded', function() {
     parseZip(file, (data) => saveRunAndShow(file, data, false));
   });
 
-  if (updateForm) {
-    updateForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      if (!updateFileInput.files || updateFileInput.files.length === 0) {
-        alert('Please choose a ZIP file.');
-        return;
-      }
-      const file = updateFileInput.files[0];
-      parseZip(file, (data) => saveRunAndShow(file, data, true));
-    });
-  }
 
   const clearData = () => {
     localStorage.removeItem('mutualList');
@@ -361,11 +339,9 @@ document.addEventListener('DOMContentLoaded', function() {
     resultsDiv.style.display = 'none';
     clearBtn.style.display = 'none';
     uploadForm.style.display = 'flex';
-    if (updateForm) updateForm.style.display = 'none';
+    if (openUploadMainBtn) openUploadMainBtn.style.display = 'none';
     fileInput.value = '';
     fileNameSpan.textContent = 'No file chosen';
-    if (updateFileInput) updateFileInput.value = '';
-    if (updateFileNameSpan) updateFileNameSpan.textContent = 'No file chosen';
   };
 
   if (clearBtn) {
@@ -405,6 +381,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (openUploadBtn) {
     openUploadBtn.addEventListener('click', function() {
+      if (uploadOverlay) uploadOverlay.style.display = 'flex';
+    });
+  }
+
+  if (openUploadMainBtn) {
+    openUploadMainBtn.addEventListener('click', function() {
       if (uploadOverlay) uploadOverlay.style.display = 'flex';
     });
   }
