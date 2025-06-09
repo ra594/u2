@@ -264,6 +264,10 @@ p {
     border-radius: 4px;
     padding: 2px 4px;
     font-size: 0.75em;
+    /* align with text */
+    display: inline-block;
+    position: relative;
+    top: -2px;
   }
   
 
