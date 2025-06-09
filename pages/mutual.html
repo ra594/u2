@@ -24,11 +24,18 @@
   </footer>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const mutualList = JSON.parse(localStorage.getItem('mutualList') || '[]');
-      const listContainer = document.getElementById('list-container');
-      const titleElem = document.getElementById('page-title');
-      
+      const runs = JSON.parse(localStorage.getItem("dataRuns") || "[]");
+      const latest = runs.length > 0 ? runs[runs.length - 1] : { mutual: [], timestamp: null };
+      const mutualList = latest.mutual || [];
+      const listContainer = document.getElementById("list-container");
+      const titleElem = document.getElementById("page-title");
+
       titleElem.textContent = `Mutual Connections (${mutualList.length})`;
+      if (latest.timestamp) {
+        const ts = document.createElement("p");
+        ts.textContent = `Snapshot: ${latest.timestamp}`;
+        titleElem.insertAdjacentElement("afterend", ts);
+      }
 
       // Function to format Unix timestamp (seconds) into "Month DD, YYYY (HH:MM AM/PM)"
       const formatTimestamp = (timestamp) => {
@@ -52,10 +59,20 @@
         mutualList.forEach(function(connection) {
           const card = document.createElement('div');
           card.className = 'card';
+          if (connection.isNew) {
+            card.classList.add("new-item");
+          }
           
           // Username element
           const usernameSpan = document.createElement('span');
           usernameSpan.textContent = connection.username;
+          if (connection.isNew) {
+            const badge = document.createElement("span");
+            badge.className = "new-badge";
+            badge.textContent = "NEW";
+            usernameSpan.appendChild(document.createTextNode(" "));
+            usernameSpan.appendChild(badge);
+          }
           
           // Inline icons container
           const iconsContainer = document.createElement('span');
