@@ -52,14 +52,24 @@ document.addEventListener('DOMContentLoaded', function() {
     resultsDiv.style.display = 'block';
   };
 
+  const formatDate = (ts) => {
+    const d = new Date(ts);
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${month}/${day}/${d.getFullYear()}`;
+  };
+
   const populateRunDates = () => {
     if (!runDatesList) return;
     runDatesList.innerHTML = '';
-    dataRuns.forEach(run => {
-      const li = document.createElement('li');
-      li.textContent = run.timestamp;
-      runDatesList.appendChild(li);
-    });
+    dataRuns
+      .slice()
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+      .forEach(run => {
+        const li = document.createElement('li');
+        li.textContent = formatDate(run.timestamp);
+        runDatesList.appendChild(li);
+      });
   };
 
   // Update file name when a file is selected
