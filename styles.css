@@ -338,6 +338,39 @@ footer p {
     gap: 5px;
 }
 
+/* Side panel */
+.side-panel {
+    position: fixed;
+    top: 50px; /* below header */
+    left: 0;
+    padding: 10px;
+    z-index: 1100;
+    color: black;
+}
+
+.side-panel .run-dates {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.side-content {
+    margin-top: 5px;
+}
+
+.side-panel.collapsed .side-content {
+    display: none;
+}
+
+#toggle-angle {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.side-panel.expanded #toggle-angle {
+    transform: rotate(90deg);
+}
+
 
 @media (max-width: 1024px) {
     .footer-content {

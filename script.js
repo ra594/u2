@@ -10,6 +10,15 @@ document.addEventListener('DOMContentLoaded', function() {
   const confirmOverlay = document.getElementById('confirm-overlay');
   const ackCheckbox = document.getElementById('ack-checkbox');
   const confirmClearBtn = document.getElementById('confirm-clear-btn');
+  const sidePanel = document.getElementById('side-panel');
+  const sideToggle = document.getElementById('side-toggle');
+  const toggleAngle = document.getElementById('toggle-angle');
+  const runDatesList = document.getElementById('run-dates');
+  const openUploadBtn = document.getElementById('open-upload');
+  const uploadOverlay = document.getElementById('upload-overlay');
+  const overlayForm = document.getElementById('overlay-form');
+  const overlayFileInput = document.getElementById('overlay-file-input');
+  const overlayFileName = document.getElementById('overlay-file-name');
 
   // Bail out if elements aren't present (e.g., help page)
   if (!fileInput || !uploadForm || !resultsDiv) {
@@ -43,6 +52,16 @@ document.addEventListener('DOMContentLoaded', function() {
     resultsDiv.style.display = 'block';
   };
 
+  const populateRunDates = () => {
+    if (!runDatesList) return;
+    runDatesList.innerHTML = '';
+    dataRuns.forEach(run => {
+      const li = document.createElement('li');
+      li.textContent = run.timestamp;
+      runDatesList.appendChild(li);
+    });
+  };
+
   // Update file name when a file is selected
   fileInput.addEventListener('change', function() {
     if (fileInput.files.length > 0) {
@@ -63,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   let dataRuns = JSON.parse(localStorage.getItem('dataRuns') || '[]');
+  populateRunDates();
   if (dataRuns.length > 0) {
     const latest = dataRuns[dataRuns.length - 1];
     uploadForm.style.display = 'none';
@@ -71,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (clearBtn) {
       clearBtn.style.display = 'inline-block';
     }
+    populateRunDates();
   } else if (localStorage.getItem('hasResults') === 'true') {
     const mutual = JSON.parse(localStorage.getItem('mutualList') || '[]');
     const followingOnly = JSON.parse(localStorage.getItem('followingOnlyList') || '[]');
@@ -83,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     dataRuns = [{ timestamp: new Date().toISOString(), mutual, followingOnly, followersOnly }];
     localStorage.setItem('dataRuns', JSON.stringify(dataRuns));
+    populateRunDates();
   }
 
   // Extraction function for following.json
@@ -218,6 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
       clearBtn.style.display = 'inline-block';
     }
     if (updateForm) updateForm.style.display = 'flex';
+    populateRunDates();
   };
 
   // Initial upload
@@ -285,6 +308,55 @@ document.addEventListener('DOMContentLoaded', function() {
     confirmClearBtn.addEventListener('click', function() {
       clearData();
       if (confirmOverlay) confirmOverlay.style.display = 'none';
+    });
+  }
+
+  if (sideToggle) {
+    sideToggle.addEventListener('click', function() {
+      if (!sidePanel) return;
+      sidePanel.classList.toggle('expanded');
+      sidePanel.classList.toggle('collapsed');
+    });
+  }
+
+  if (openUploadBtn) {
+    openUploadBtn.addEventListener('click', function() {
+      if (uploadOverlay) uploadOverlay.style.display = 'flex';
+    });
+  }
+
+  if (uploadOverlay) {
+    uploadOverlay.addEventListener('click', function(e) {
+      if (e.target === uploadOverlay) {
+        uploadOverlay.style.display = 'none';
+      }
+    });
+  }
+
+  if (overlayFileInput) {
+    overlayFileInput.addEventListener('change', function() {
+      if (overlayFileInput.files.length > 0) {
+        overlayFileName.textContent = overlayFileInput.files[0].name;
+      } else {
+        overlayFileName.textContent = 'No file chosen';
+      }
+    });
+  }
+
+  if (overlayForm) {
+    overlayForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!overlayFileInput.files || overlayFileInput.files.length === 0) {
+        alert('Please choose a ZIP file.');
+        return;
+      }
+      const file = overlayFileInput.files[0];
+      parseZip(file, (data) => {
+        saveRunAndShow(file, data, true);
+        uploadOverlay.style.display = 'none';
+        overlayFileInput.value = '';
+        overlayFileName.textContent = 'No file chosen';
+      });
     });
   }
 });
