@@ -3,6 +3,39 @@ document.addEventListener('DOMContentLoaded', function() {
   const fileNameSpan = document.getElementById('file-name');
   const uploadForm = document.getElementById('upload-form');
   const resultsDiv = document.getElementById('results');
+  const clearBtn = document.getElementById('clear-btn');
+
+  // Bail out if elements aren't present (e.g., help page)
+  if (!fileInput || !uploadForm || !resultsDiv) {
+    return;
+  }
+
+  const showResults = (mutual, followingOnly, followersOnly) => {
+    resultsDiv.innerHTML = '';
+    const container = document.createElement('div');
+    container.className = 'results-links';
+
+    const mutualLink = document.createElement('a');
+    mutualLink.href = 'pages/mutual.html';
+    mutualLink.textContent = `View Mutual Connections (${mutual.length})`;
+    mutualLink.className = 'btn';
+
+    const followingLink = document.createElement('a');
+    followingLink.href = 'pages/following.html';
+    followingLink.textContent = `View Following Only (${followingOnly.length})`;
+    followingLink.className = 'btn';
+
+    const followersLink = document.createElement('a');
+    followersLink.href = 'pages/followers.html';
+    followersLink.textContent = `View Followers Only (${followersOnly.length})`;
+    followersLink.className = 'btn';
+
+    container.appendChild(mutualLink);
+    container.appendChild(followingLink);
+    container.appendChild(followersLink);
+    resultsDiv.appendChild(container);
+    resultsDiv.style.display = 'block';
+  };
 
   // Update file name when a file is selected
   fileInput.addEventListener('change', function() {
@@ -12,6 +45,17 @@ document.addEventListener('DOMContentLoaded', function() {
       fileNameSpan.textContent = 'No file chosen';
     }
   });
+
+  if (localStorage.getItem('hasResults') === 'true') {
+    const mutual = JSON.parse(localStorage.getItem('mutualList') || '[]');
+    const followingOnly = JSON.parse(localStorage.getItem('followingOnlyList') || '[]');
+    const followersOnly = JSON.parse(localStorage.getItem('followersOnlyList') || '[]');
+    uploadForm.style.display = 'none';
+    showResults(mutual, followingOnly, followersOnly);
+    if (clearBtn) {
+      clearBtn.style.display = 'inline-block';
+    }
+  }
 
   // Extraction function for following.json
   const extractFollowingData = (content) => {
@@ -116,32 +160,12 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('mutualList', JSON.stringify(mutual));
             localStorage.setItem('followingOnlyList', JSON.stringify(followingOnly));
             localStorage.setItem('followersOnlyList', JSON.stringify(followersOnly));
-            
-            // Create view buttons (with counts) to link to separate pages
-            resultsDiv.innerHTML = '';
-            const container = document.createElement('div');
-            container.className = 'results-links';
-            
-            const mutualLink = document.createElement('a');
-            mutualLink.href = 'pages/mutual.html';
-            mutualLink.textContent = `View Mutual Connections (${mutual.length})`;
-            mutualLink.className = 'btn';
-            
-            const followingLink = document.createElement('a');
-            followingLink.href = 'pages/following.html';
-            followingLink.textContent = `View Following Only (${followingOnly.length})`;
-            followingLink.className = 'btn';
-            
-            const followersLink = document.createElement('a');
-            followersLink.href = 'pages/followers.html';
-            followersLink.textContent = `View Followers Only (${followersOnly.length})`;
-            followersLink.className = 'btn';
-            
-            container.appendChild(mutualLink);
-            container.appendChild(followingLink);
-            container.appendChild(followersLink);
-            resultsDiv.appendChild(container);
-            resultsDiv.style.display = 'block';
+            localStorage.setItem('hasResults', 'true');
+
+            showResults(mutual, followingOnly, followersOnly);
+            if (clearBtn) {
+              clearBtn.style.display = 'inline-block';
+            }
           }).catch(function(error) {
             console.error('Error processing JSON files:', error);
           });
@@ -153,4 +177,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     reader.readAsArrayBuffer(file);
   });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function() {
+      localStorage.removeItem('mutualList');
+      localStorage.removeItem('followingOnlyList');
+      localStorage.removeItem('followersOnlyList');
+      localStorage.removeItem('hasResults');
+      resultsDiv.innerHTML = '';
+      resultsDiv.style.display = 'none';
+      clearBtn.style.display = 'none';
+      uploadForm.style.display = 'flex';
+      fileInput.value = '';
+      fileNameSpan.textContent = 'No file chosen';
+    });
+  }
 });
