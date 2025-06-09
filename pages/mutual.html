@@ -28,13 +28,19 @@
         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       const latest = runs.length > 0 ? runs[0] : { mutual: [], timestamp: null };
       const mutualList = latest.mutual || [];
+      const formatDate = (ts) => {
+        const d = new Date(ts);
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${month}/${day}/${d.getFullYear()}`;
+      };
       const listContainer = document.getElementById("list-container");
       const titleElem = document.getElementById("page-title");
 
       titleElem.textContent = `Mutual Connections (${mutualList.length})`;
       if (latest.timestamp) {
         const ts = document.createElement("p");
-        ts.textContent = `Snapshot: ${latest.timestamp}`;
+        ts.textContent = `Snapshot: ${formatDate(latest.timestamp)}`;
         titleElem.insertAdjacentElement("afterend", ts);
       }
 
