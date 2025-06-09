@@ -270,6 +270,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const saveRunAndShow = (file, data, isUpdate) => {
     const runTimestamp = data.timestamp ? data.timestamp.toISOString() : extractDate(file.name);
+
+    // Prevent storing duplicate snapshots with the same creation timestamp
+    if (dataRuns.some(r => r.timestamp === runTimestamp)) {
+      alert('Datapoint already exists');
+      return;
+    }
+
     const run = {
       timestamp: runTimestamp,
       mutual: data.mutual,
