@@ -82,9 +82,13 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   let dataRuns = JSON.parse(localStorage.getItem('dataRuns') || '[]');
+  const sortDataRuns = () => {
+    dataRuns.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  };
+  sortDataRuns();
   populateRunDates();
   if (dataRuns.length > 0) {
-    const latest = dataRuns[dataRuns.length - 1];
+    const latest = dataRuns[0];
     uploadForm.style.display = 'none';
     if (updateForm) updateForm.style.display = 'flex';
     showResults(latest.mutual, latest.followingOnly, latest.followersOnly);
@@ -212,7 +216,8 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     if (isUpdate && dataRuns.length > 0) {
-      const prev = dataRuns[dataRuns.length - 1];
+      sortDataRuns();
+      const prev = dataRuns[0];
       const prevFollowSet = new Set(prev.followingOnly.map(i => i.username));
       const prevFanSet = new Set(prev.followersOnly.map(i => i.username));
       const prevMutualSet = new Set(prev.mutual.map(i => i.username));
@@ -229,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       dataRuns = [run];
     }
-
+    sortDataRuns();
     localStorage.setItem('dataRuns', JSON.stringify(dataRuns));
     // legacy keys for other pages
     localStorage.setItem('mutualList', JSON.stringify(run.mutual));
@@ -275,6 +280,8 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.removeItem('followersOnlyList');
     localStorage.removeItem('hasResults');
     localStorage.removeItem('dataRuns');
+    dataRuns = [];
+    sortDataRuns();
     resultsDiv.innerHTML = '';
     resultsDiv.style.display = 'none';
     clearBtn.style.display = 'none';

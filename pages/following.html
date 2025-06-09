@@ -24,8 +24,9 @@
   </footer>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const runs = JSON.parse(localStorage.getItem('dataRuns') || '[]');
-      const latest = runs.length > 0 ? runs[runs.length - 1] : { followingOnly: [], timestamp: null };
+      const runs = JSON.parse(localStorage.getItem('dataRuns') || '[]')
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      const latest = runs.length > 0 ? runs[0] : { followingOnly: [], timestamp: null };
       const followingOnlyList = latest.followingOnly || [];
       const listContainer = document.getElementById('list-container');
       const titleElem = document.getElementById('page-title');
