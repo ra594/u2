@@ -405,5 +405,10 @@ footer p {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     padding: 5px 10px;
     font-size: 0.8em;
-    z-index: 1000;
+    #upload-overlay .modal {
+        background-color: transparent;
+        padding: 0;
+    }
+    #upload-overlay .upload-form {
+        width: 500px;
 }
