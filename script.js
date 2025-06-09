@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('The ZIP file is missing one or both required JSON files (following.json, followers_1.json).');
             return;
           }
+          const archiveDate = followingFile.date || followersFile.date || null;
           Promise.all([followingFile.async("string"), followersFile.async("string")]).then(function([followingContent, followersContent]) {
             const followingData = extractFollowingData(followingContent);
             const followersData = extractFollowersData(followersContent);
@@ -189,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
               }
             });
 
-            callback({ mutual, followingOnly, followersOnly });
+            callback({ mutual, followingOnly, followersOnly, timestamp: archiveDate });
           }).catch(function(error) {
             console.error('Error processing JSON files:', error);
           });
@@ -202,8 +203,9 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   const saveRunAndShow = (file, data, isUpdate) => {
+    const runTimestamp = data.timestamp ? data.timestamp.toISOString() : extractDate(file.name);
     const run = {
-      timestamp: extractDate(file.name),
+      timestamp: runTimestamp,
       mutual: data.mutual,
       followingOnly: data.followingOnly,
       followersOnly: data.followersOnly
