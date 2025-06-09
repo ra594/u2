@@ -251,10 +251,11 @@ p {
     padding: 10px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     direction: ltr;  /* Ensure text inside flows normally */
+    box-sizing: border-box;
   }
 
   .new-item {
-    border: 2px solid #d72f2f;
+    outline: 2px solid #d72f2f;
   }
 
   .new-badge {
@@ -411,4 +412,5 @@ footer p {
     }
     #upload-overlay .upload-form {
         width: 500px;
+    }
 }
