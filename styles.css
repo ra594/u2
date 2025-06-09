@@ -389,3 +389,21 @@ footer p {
         width: 100%;
     }
 }
+
+.delete-run {
+    margin-left: 5px;
+    color: #ff4c4c;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.run-tooltip {
+    position: absolute;
+    background-color: #fff;
+    color: #000;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 5px 10px;
+    font-size: 0.8em;
+    z-index: 1000;
+}

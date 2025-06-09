@@ -62,14 +62,71 @@ document.addEventListener('DOMContentLoaded', function() {
   const populateRunDates = () => {
     if (!runDatesList) return;
     runDatesList.innerHTML = '';
-    dataRuns
-      .slice()
-      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-      .forEach(run => {
-        const li = document.createElement('li');
-        li.textContent = formatDate(run.timestamp);
-        runDatesList.appendChild(li);
+
+    dataRuns.forEach((run, index) => {
+      const li = document.createElement('li');
+      const dateSpan = document.createElement('span');
+      dateSpan.textContent = run.timestamp;
+      li.appendChild(dateSpan);
+
+      const del = document.createElement('span');
+      del.textContent = '\u00D7';
+      del.className = 'delete-run';
+      li.appendChild(document.createTextNode(' '));
+      li.appendChild(del);
+
+      let tooltip;
+      const showTooltip = () => {
+        if (!tooltip) {
+          tooltip = document.createElement('div');
+          tooltip.className = 'run-tooltip';
+          tooltip.textContent = 'Delete this run';
+          document.body.appendChild(tooltip);
+        }
+        const rect = del.getBoundingClientRect();
+        tooltip.style.top = (window.scrollY + rect.bottom + 5) + 'px';
+        tooltip.style.left = (window.scrollX + rect.left) + 'px';
+      };
+      const hideTooltip = () => {
+        del._hideTimeout = setTimeout(() => {
+          const iconHovered = del.matches(':hover');
+          const tooltipHovered = tooltip ? tooltip.matches(':hover') : false;
+          if (!iconHovered && !tooltipHovered && tooltip) {
+            document.body.removeChild(tooltip);
+            tooltip = null;
+          }
+        }, 200);
+      };
+
+      del.addEventListener('mouseenter', (e) => {
+        if (del._hideTimeout) clearTimeout(del._hideTimeout);
+        showTooltip();
       });
+      del.addEventListener('mouseleave', hideTooltip);
+
+      del.addEventListener('click', () => {
+        dataRuns.splice(index, 1);
+        if (dataRuns.length === 0) {
+          clearData();
+          dataRuns = [];
+          populateRunDates();
+          return;
+        }
+        localStorage.setItem('dataRuns', JSON.stringify(dataRuns));
+        const latest = dataRuns[dataRuns.length - 1];
+        localStorage.setItem('mutualList', JSON.stringify(latest.mutual));
+        localStorage.setItem('followingOnlyList', JSON.stringify(latest.followingOnly));
+        localStorage.setItem('followersOnlyList', JSON.stringify(latest.followersOnly));
+        localStorage.setItem('hasResults', 'true');
+
+        showResults(latest.mutual, latest.followingOnly, latest.followersOnly);
+        if (clearBtn) clearBtn.style.display = 'inline-block';
+        if (updateForm) updateForm.style.display = 'flex';
+        populateRunDates();
+      });
+
+      runDatesList.appendChild(li);
+    });
   };
 
   // Update file name when a file is selected
