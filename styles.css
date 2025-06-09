@@ -231,7 +231,17 @@ p {
     margin: 0 auto;
     direction: ltr;  /* Items ordered right-to–left per row */
     padding-bottom: 20px;  /* Padding beneath the cards */
-  }
+}
+
+/* Layout adjustments when no results are present */
+.list-container.no-results {
+    display: flex;
+    justify-content: center;
+}
+
+.list-container.no-results .card {
+    text-align: center;
+}
   
   /* Card design for each list item */
   .card {

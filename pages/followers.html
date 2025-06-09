@@ -51,6 +51,7 @@
       };
 
       if (followersOnlyList.length === 0) {
+        listContainer.classList.add('no-results');
         const card = document.createElement('div');
         card.className = 'card';
         card.textContent = 'No followers only connections found.';
