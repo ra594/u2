@@ -311,6 +311,8 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem('hasResults', 'true');
 
     showResults(run.mutual, run.followingOnly, run.followersOnly);
+    // Hide the initial upload form once we have at least one run
+    if (uploadForm) uploadForm.style.display = 'none';
     if (clearBtn) {
       clearBtn.style.display = 'inline-block';
     }
