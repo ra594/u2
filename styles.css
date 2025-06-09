@@ -242,6 +242,18 @@ p {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     direction: ltr;  /* Ensure text inside flows normally */
   }
+
+  .new-item {
+    border: 2px solid #4CAF50;
+  }
+
+  .new-badge {
+    background-color: #4CAF50;
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 0.75em;
+  }
   
 
 footer {

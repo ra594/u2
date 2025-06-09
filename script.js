@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const fileInput = document.getElementById('file-input');
   const fileNameSpan = document.getElementById('file-name');
   const uploadForm = document.getElementById('upload-form');
+  const updateFileInput = document.getElementById('update-file-input');
+  const updateFileNameSpan = document.getElementById('update-file-name');
+  const updateForm = document.getElementById('update-form');
   const resultsDiv = document.getElementById('results');
   const clearBtn = document.getElementById('clear-btn');
 
@@ -46,15 +49,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  if (localStorage.getItem('hasResults') === 'true') {
+  if (updateFileInput) {
+    updateFileInput.addEventListener('change', function() {
+      if (updateFileInput.files.length > 0) {
+        updateFileNameSpan.textContent = updateFileInput.files[0].name;
+      } else {
+        updateFileNameSpan.textContent = 'No file chosen';
+      }
+    });
+  }
+
+  let dataRuns = JSON.parse(localStorage.getItem('dataRuns') || '[]');
+  if (dataRuns.length > 0) {
+    const latest = dataRuns[dataRuns.length - 1];
+    uploadForm.style.display = 'none';
+    if (updateForm) updateForm.style.display = 'flex';
+    showResults(latest.mutual, latest.followingOnly, latest.followersOnly);
+    if (clearBtn) {
+      clearBtn.style.display = 'inline-block';
+    }
+  } else if (localStorage.getItem('hasResults') === 'true') {
     const mutual = JSON.parse(localStorage.getItem('mutualList') || '[]');
     const followingOnly = JSON.parse(localStorage.getItem('followingOnlyList') || '[]');
     const followersOnly = JSON.parse(localStorage.getItem('followersOnlyList') || '[]');
     uploadForm.style.display = 'none';
+    if (updateForm) updateForm.style.display = 'flex';
     showResults(mutual, followingOnly, followersOnly);
     if (clearBtn) {
       clearBtn.style.display = 'inline-block';
     }
+    dataRuns = [{ timestamp: new Date().toISOString(), mutual, followingOnly, followersOnly }];
+    localStorage.setItem('dataRuns', JSON.stringify(dataRuns));
   }
 
   // Extraction function for following.json
@@ -86,26 +111,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }, {});
   };
 
-  // Handle form submission
-  uploadForm.addEventListener('submit', function(e) {
-    e.preventDefault();
+  const extractDate = (name) => {
+    const match = name.match(/instagram-[^-]+-(\d{4}-\d{2}-\d{2})/);
+    return match ? match[1] : new Date().toISOString().slice(0, 10);
+  };
 
-    if (!fileInput.files || fileInput.files.length === 0) {
-      alert('Please choose a ZIP file.');
-      return;
-    }
-    
-    // Hide the upload form upon submission
-    uploadForm.style.display = 'none';
-
-    const file = fileInput.files[0];
+  const parseZip = (file, callback) => {
     const reader = new FileReader();
-
     reader.onload = function(e) {
       const arrayBuffer = e.target.result;
       JSZip.loadAsync(arrayBuffer)
         .then(function(zip) {
-          // Navigate to the folder "connections/followers_and_following"
           const folder = zip.folder("connections/followers_and_following");
           if (!folder) {
             alert('The ZIP file does not contain the required folder structure: connections/followers_and_following');
@@ -117,20 +133,13 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('The ZIP file is missing one or both required JSON files (following.json, followers_1.json).');
             return;
           }
-          
-          // Read both JSON files as strings
-          const followingPromise = followingFile.async("string");
-          const followersPromise = followersFile.async("string");
-
-          Promise.all([followingPromise, followersPromise]).then(function([followingContent, followersContent]) {
+          Promise.all([followingFile.async("string"), followersFile.async("string")]).then(function([followingContent, followersContent]) {
             const followingData = extractFollowingData(followingContent);
             const followersData = extractFollowersData(followersContent);
-            
             let mutual = [];
             let followingOnly = [];
             let followersOnly = [];
-            
-            // Process followingData: check if username also exists in followersData.
+
             Object.keys(followingData).forEach(username => {
               if (followersData[username]) {
                 mutual.push({
@@ -145,8 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
               }
             });
-            
-            // Process followersData: add those that are only in followersData.
+
             Object.keys(followersData).forEach(username => {
               if (!followingData[username]) {
                 followersOnly.push({
@@ -155,17 +163,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
               }
             });
-            
-            // Save arrays with connection objects to localStorage
-            localStorage.setItem('mutualList', JSON.stringify(mutual));
-            localStorage.setItem('followingOnlyList', JSON.stringify(followingOnly));
-            localStorage.setItem('followersOnlyList', JSON.stringify(followersOnly));
-            localStorage.setItem('hasResults', 'true');
 
-            showResults(mutual, followingOnly, followersOnly);
-            if (clearBtn) {
-              clearBtn.style.display = 'inline-block';
-            }
+            callback({ mutual, followingOnly, followersOnly });
           }).catch(function(error) {
             console.error('Error processing JSON files:', error);
           });
@@ -174,9 +173,73 @@ document.addEventListener('DOMContentLoaded', function() {
           alert('An error occurred while processing the ZIP file.');
         });
     };
-
     reader.readAsArrayBuffer(file);
+  };
+
+  const saveRunAndShow = (file, data, isUpdate) => {
+    const run = {
+      timestamp: extractDate(file.name),
+      mutual: data.mutual,
+      followingOnly: data.followingOnly,
+      followersOnly: data.followersOnly
+    };
+
+    if (isUpdate && dataRuns.length > 0) {
+      const prev = dataRuns[dataRuns.length - 1];
+      const prevFollowSet = new Set(prev.followingOnly.map(i => i.username));
+      const prevFanSet = new Set(prev.followersOnly.map(i => i.username));
+      const prevMutualSet = new Set(prev.mutual.map(i => i.username));
+      run.followingOnly = run.followingOnly.map(i => {
+        return prevFollowSet.has(i.username) ? i : Object.assign({}, i, { isNew: true });
+      });
+      run.followersOnly = run.followersOnly.map(i => {
+        return prevFanSet.has(i.username) ? i : Object.assign({}, i, { isNew: true });
+      });
+      run.mutual = run.mutual.map(i => {
+        return prevMutualSet.has(i.username) ? i : Object.assign({}, i, { isNew: true });
+      });
+      dataRuns.push(run);
+    } else {
+      dataRuns = [run];
+    }
+
+    localStorage.setItem('dataRuns', JSON.stringify(dataRuns));
+    // legacy keys for other pages
+    localStorage.setItem('mutualList', JSON.stringify(run.mutual));
+    localStorage.setItem('followingOnlyList', JSON.stringify(run.followingOnly));
+    localStorage.setItem('followersOnlyList', JSON.stringify(run.followersOnly));
+    localStorage.setItem('hasResults', 'true');
+
+    showResults(run.mutual, run.followingOnly, run.followersOnly);
+    if (clearBtn) {
+      clearBtn.style.display = 'inline-block';
+    }
+    if (updateForm) updateForm.style.display = 'flex';
+  };
+
+  // Initial upload
+  uploadForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!fileInput.files || fileInput.files.length === 0) {
+      alert('Please choose a ZIP file.');
+      return;
+    }
+    uploadForm.style.display = 'none';
+    const file = fileInput.files[0];
+    parseZip(file, (data) => saveRunAndShow(file, data, false));
   });
+
+  if (updateForm) {
+    updateForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!updateFileInput.files || updateFileInput.files.length === 0) {
+        alert('Please choose a ZIP file.');
+        return;
+      }
+      const file = updateFileInput.files[0];
+      parseZip(file, (data) => saveRunAndShow(file, data, true));
+    });
+  }
 
   if (clearBtn) {
     clearBtn.addEventListener('click', function() {
@@ -184,12 +247,16 @@ document.addEventListener('DOMContentLoaded', function() {
       localStorage.removeItem('followingOnlyList');
       localStorage.removeItem('followersOnlyList');
       localStorage.removeItem('hasResults');
+      localStorage.removeItem('dataRuns');
       resultsDiv.innerHTML = '';
       resultsDiv.style.display = 'none';
       clearBtn.style.display = 'none';
       uploadForm.style.display = 'flex';
+      if (updateForm) updateForm.style.display = 'none';
       fileInput.value = '';
       fileNameSpan.textContent = 'No file chosen';
+      if (updateFileInput) updateFileInput.value = '';
+      if (updateFileNameSpan) updateFileNameSpan.textContent = 'No file chosen';
     });
   }
 });
