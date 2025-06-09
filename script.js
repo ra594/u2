@@ -256,6 +256,16 @@ document.addEventListener('DOMContentLoaded', function() {
               }
             });
 
+            // Sort lists by timestamps to preserven chronological order for 433
+            const sortBy = (field) => (a, b) => {
+              const av = a[field] || 0;
+              const bv = b[field] || 0;
+              return bv - av;
+            };
+            mutual.sort(sortBy('youFollowedOn'));
+            followingOnly.sort(sortBy('youFollowedOn'));
+            followersOnly.sort(sortBy('followedYouOn'));
+
             callback({ mutual, followingOnly, followersOnly, timestamp: archiveDate });
           }).catch(function(error) {
             console.error('Error processing JSON files:', error);
