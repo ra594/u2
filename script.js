@@ -61,12 +61,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const populateRunDates = () => {
     if (!runDatesList) return;
+    sortDataRuns();
     runDatesList.innerHTML = '';
 
     dataRuns.forEach((run, index) => {
       const li = document.createElement('li');
       const dateSpan = document.createElement('span');
-      dateSpan.textContent = run.timestamp;
+      dateSpan.textContent = formatDate(run.timestamp);
       li.appendChild(dateSpan);
 
       const del = document.createElement('span');
