@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!tooltip) {
           tooltip = document.createElement('div');
           tooltip.className = 'run-tooltip';
-          tooltip.textContent = 'Delete this run';
+          tooltip.textContent = 'Delete this datapoint';
           document.body.appendChild(tooltip);
         }
         const rect = del.getBoundingClientRect();
