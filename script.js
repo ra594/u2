@@ -201,12 +201,31 @@ document.addEventListener('DOMContentLoaded', function() {
     let data = JSON.parse(content);
     // Create a map: key is username, value is an object with youFollowedOn
     return data.relationships_following.reduce((acc, item) => {
-      if (item.string_list_data && item.string_list_data.length > 0) {
-        const username = item.string_list_data[0].value;
-        // If timestamp exists, use it; otherwise, null.
-        const timestamp = item.string_list_data[0].timestamp || null;
-        acc[username] = { username, youFollowedOn: timestamp };
+      const preferTitle = (item.title || '').trim();
+      const stringList = item.string_list_data && item.string_list_data.length > 0 ? item.string_list_data[0] : null;
+      let username = preferTitle;
+
+      if (!username && stringList && stringList.value) {
+        username = stringList.value.trim();
       }
+
+      if (!username && item.href) {
+        try {
+          const url = new URL(item.href);
+          username = url.pathname.split('/').filter(Boolean)[0] || '';
+        } catch (e) {
+          const match = item.href.match(/instagram\.com\/([^/?#]+)/i);
+          username = match ? match[1] : '';
+        }
+      }
+      
+      if (!username) {
+        return acc;
+      }
+
+      // If timestamp exists, use it; otherwise, null.
+      const timestamp = stringList && stringList.timestamp ? stringList.timestamp : null;
+      acc[username] = { username, youFollowedOn: timestamp };
       return acc;
     }, {});
   };
